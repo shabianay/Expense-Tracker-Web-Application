@@ -2,24 +2,39 @@
 
 @section('content')
     <div x-data="dashboard()" x-init="init()">
-        {{-- Blue Gradient Header with Wave --}}
+        {{-- Blue Gradient Header --}}
         <div class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 pt-5 pb-8 px-5">
-            {{-- Header --}}
-            <div class="flex items-center justify-between mb-4">
+            {{-- User Profile & Actions Bar --}}
+            <div class="flex items-center justify-between mb-5">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold shadow-sm">
-                        {{ substr(auth()->user()->name ?? 'U', 0, 1) }}
+                    <div class="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white font-bold shadow-sm">
+                        {{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}
                     </div>
                     <div>
                         <div class="text-white/70 text-xs">Welcome back,</div>
-                        <h1 class="text-white font-semibold text-sm">{{ auth()->user()->name ?? 'User' }}</h1>
+                        <h1 class="text-white font-bold text-base leading-tight">{{ auth()->user()->name ?? 'User' }}</h1>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1 bg-white/10 backdrop-blur-sm p-1 rounded-xl border border-white/10">
+                    <button @click="showBalance = !showBalance"
+                            class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors"
+                            :title="showBalance ? 'Hide Balance' : 'Show Balance'">
+                        <template x-if="showBalance">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </template>
+                        <template x-if="!showBalance">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                        </template>
+                    </button>
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
-                        <button type="submit" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title="Logout">
+                        <button type="submit" class="text-white/80 hover:text-red-200 p-2 rounded-lg hover:bg-white/10 transition-colors flex items-center" title="Logout">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
@@ -28,50 +43,29 @@
                 </div>
             </div>
 
-            {{-- Date & Eye Controls --}}
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2">
-                    <button @click="prevMonth()" class="text-white/80 hover:text-white p-1 rounded hover:bg-white/10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <select x-model="month" @change="window.location.href='?month='+month" class="text-sm border border-white/30 rounded-lg px-3 py-1 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-300 w-36">
-                        @foreach(range(date('Y') - 2, date('Y')) as $y)
-                            @foreach(range(1, 12) as $m)
-                                @php
-                                    $value = "$y-".str_pad($m, 2, '0', STR_PAD_LEFT);
-                                    $label = date('F Y', mktime(0, 0, 0, $m, 1, $y));
-                                @endphp
-                                <option value="{{ $value }}" @if($month === $value) selected @endif class="text-gray-800 bg-white">{{ $label }}</option>
-                            @endforeach
+            {{-- Month Selector Bar --}}
+            <div class="flex items-center justify-between bg-white/10 backdrop-blur-sm rounded-xl p-1.5 mb-5 border border-white/10">
+                <button @click="prevMonth()" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <select x-model="month" @change="window.location.href='?month='+month" class="text-sm font-medium border-0 rounded-lg px-3 py-1.5 text-gray-800 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer">
+                    @foreach(range(date('Y') - 2, date('Y')) as $y)
+                        @foreach(range(1, 12) as $m)
+                            @php
+                                $value = "$y-".str_pad($m, 2, '0', STR_PAD_LEFT);
+                                $label = date('F Y', mktime(0, 0, 0, $m, 1, $y));
+                            @endphp
+                            <option value="{{ $value }}" @if($month === $value) selected @endif class="text-gray-800 bg-white">{{ $label }}</option>
                         @endforeach
-                    </select>
-                    <button @click="nextMonth()" class="text-white/80 hover:text-white p-1 rounded hover:bg-white/10">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                    <button @click="showBalance = !showBalance" class="text-white/80 hover:text-white p-1 rounded hover:bg-white/10 ml-1">
-                        <template x-if="showBalance">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </template>
-                        <template x-if="!showBalance">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                            </svg>
-                        </template>
-                    </button>
-                </div>
+                    @endforeach
+                </select>
+                <button @click="nextMonth()" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
             </div>
 
             {{-- Summary Cards --}}

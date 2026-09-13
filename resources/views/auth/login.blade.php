@@ -34,7 +34,7 @@
 
                 <div>
                     <label for="password" class="block text-xs font-semibold text-gray-600 mb-1">Password</label>
-                    <input id="password" type="password" name="password" required
+                    <input id="password" type="password" name="password" required autocomplete="current-password"
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     @error('password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
