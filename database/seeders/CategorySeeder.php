@@ -11,7 +11,13 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $users = User::all();
+        foreach ($users as $user) {
+            static::seedForUser($user);
+        }
+    }
 
+    public static function seedForUser(User $user): void
+    {
         $expenseCategories = [
             ['name' => 'Food', 'icon' => '🍔', 'color' => '#FF6B6B'],
             ['name' => 'Clothing', 'icon' => '👕', 'color' => '#4ECDC4'],
@@ -35,30 +41,28 @@ class CategorySeeder extends Seeder
             ['name' => 'Other Income', 'icon' => '💰', 'color' => '#95E1D3'],
         ];
 
-        foreach ($users as $user) {
-            $sortOrder = 0;
-            foreach ($expenseCategories as $cat) {
-                Category::create([
-                    'user_id' => $user->id,
-                    'name' => $cat['name'],
-                    'type' => 'expense',
-                    'icon' => $cat['icon'],
-                    'color' => $cat['color'],
-                    'sort_order' => $sortOrder++,
-                ]);
-            }
+        $sortOrder = 0;
+        foreach ($expenseCategories as $cat) {
+            Category::create([
+                'user_id' => $user->id,
+                'name' => $cat['name'],
+                'type' => 'expense',
+                'icon' => $cat['icon'],
+                'color' => $cat['color'],
+                'sort_order' => $sortOrder++,
+            ]);
+        }
 
-            $sortOrder = 0;
-            foreach ($incomeCategories as $cat) {
-                Category::create([
-                    'user_id' => $user->id,
-                    'name' => $cat['name'],
-                    'type' => 'income',
-                    'icon' => $cat['icon'],
-                    'color' => $cat['color'],
-                    'sort_order' => $sortOrder++,
-                ]);
-            }
+        $sortOrder = 0;
+        foreach ($incomeCategories as $cat) {
+            Category::create([
+                'user_id' => $user->id,
+                'name' => $cat['name'],
+                'type' => 'income',
+                'icon' => $cat['icon'],
+                'color' => $cat['color'],
+                'sort_order' => $sortOrder++,
+            ]);
         }
     }
 }

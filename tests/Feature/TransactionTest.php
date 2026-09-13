@@ -21,6 +21,7 @@ class TransactionTest extends TestCase
         parent::setUp();
         $this->user = User::firstOrCreate(['email' => 'default@example.com'], ['name' => 'Default User', 'password' => bcrypt('password')]);
         $this->category = Category::create(['user_id' => $this->user->id, 'name' => 'Food', 'type' => 'expense', 'icon' => 'utensils', 'color' => '#FF0000', 'sort_order' => 0]);
+        $this->actingAs($this->user);
     }
 
     public function test_create_form_renders(): void

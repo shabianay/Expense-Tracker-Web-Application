@@ -6,7 +6,30 @@
         <div class="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-900 pt-5 pb-8 px-5">
             {{-- Header --}}
             <div class="flex items-center justify-between mb-4">
-                <h1 class="text-white font-semibold text-lg">Dashboard</h1>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold shadow-sm">
+                        {{ substr(auth()->user()->name ?? 'U', 0, 1) }}
+                    </div>
+                    <div>
+                        <div class="text-white/70 text-xs">Welcome back,</div>
+                        <h1 class="text-white font-semibold text-sm">{{ auth()->user()->name ?? 'User' }}</h1>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <form method="POST" action="{{ route('logout') }}" class="inline">
+                        @csrf
+                        <button type="submit" class="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors" title="Logout">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            {{-- Date & Eye Controls --}}
+            <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2">
                     <button @click="prevMonth()" class="text-white/80 hover:text-white p-1 rounded hover:bg-white/10">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"

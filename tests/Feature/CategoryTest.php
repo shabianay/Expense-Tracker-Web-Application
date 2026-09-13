@@ -18,6 +18,7 @@ class CategoryTest extends TestCase
     {
         parent::setUp();
         $this->user = User::firstOrCreate(['email' => 'default@example.com'], ['name' => 'Default User', 'password' => bcrypt('password')]);
+        $this->actingAs($this->user);
     }
 
     public function test_index_renders(): void

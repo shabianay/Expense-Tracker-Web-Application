@@ -14,7 +14,8 @@ class DashboardTest extends TestCase
 
     public function test_dashboard_renders(): void
     {
-        $this->get('/dashboard')->assertStatus(200);
+        $user = User::firstOrCreate(['email' => 'default@example.com'], ['name' => 'Default User', 'password' => bcrypt('password')]);
+        $this->actingAs($user)->get('/dashboard')->assertStatus(200);
     }
 
     public function test_dashboard_shows_correct_month_data(): void
@@ -23,6 +24,6 @@ class DashboardTest extends TestCase
         $category = Category::create(['user_id' => $user->id, 'name' => 'Food', 'type' => 'expense', 'icon' => 'utensils', 'color' => '#FF0000', 'sort_order' => 0]);
         Transaction::create(['user_id' => $user->id, 'category_id' => $category->id, 'type' => 'expense', 'amount' => 50000, 'transaction_date' => '2026-09-05 10:00:00']);
 
-        $this->get('/dashboard?month=2026-09')->assertStatus(200)->assertSee('50');
+        $this->actingAs($user)->get('/dashboard?month=2026-09')->assertStatus(200)->assertSee('50');
     }
 }
